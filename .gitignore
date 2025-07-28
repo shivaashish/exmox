@@ -1,0 +1,15 @@
+# Ignore Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ignore JetBrains IDE folders and files
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Optional: ignore virtual environment folders (common names)
+venv/
+.env/
+.envrc/
