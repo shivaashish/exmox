@@ -1,6 +1,6 @@
 from enum import StrEnum
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 from rover.datamodel.schemas.base import ModelBase
 from rover.datamodel.schemas.fields import PrimaryKey
@@ -33,6 +33,14 @@ class Direction(StrEnum):
 
 class CommandRequest(BaseModel):
     command: str
+
+    @field_validator("command")
+    @classmethod
+    def validate_command(cls, value: str) -> str:
+        allowed = {"F", "B", "L", "R"}
+        if any(c not in allowed for c in value.upper()):
+            raise ValueError("Invalid command characters found")
+        return value.upper()
 
 
 class _RoverBase(ModelBase):

@@ -22,9 +22,6 @@ def get_current_location(session: Session) -> RoverEntity:
 
 @router.post("/command")
 def move_after_command(request: CommandRequest, session: Session) -> dict:
-    if any(action not in {"F", "B", "L", "R"} for action in request.command.upper()):
-        raise HTTPException(status_code=400, detail=f"Invalid command characters found")
-
     db_obj = session.exec(select(Rover)).first()
     if not db_obj:
         raise HTTPException(status_code=404, detail="Rover not found")
@@ -41,10 +38,8 @@ def move_after_command(request: CommandRequest, session: Session) -> dict:
             db_obj.move_backward()
         elif action == "L":
             db_obj.turn_left()
-        elif action == "R":
-            db_obj.turn_right()
         else:
-            raise HTTPException(status_code=400, detail=f"Invalid command: {action}")
+            db_obj.turn_right()
 
         # Check for obstacle and revert
         if action in {"F", "B"} and (db_obj.x, db_obj.y) in obstacles:
