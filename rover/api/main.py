@@ -2,8 +2,10 @@ from contextlib import AbstractAsyncContextManager, asynccontextmanager
 from pathlib import Path
 
 import uvicorn
-from fastapi import FastAPI
-from sqlmodel import SQLModel, select
+from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from sqlmodel import select
 
 from rover.api.routers import core_router
 from rover.api.settings import Settings
@@ -34,6 +36,14 @@ async def lifespan(app: FastAPI) -> AbstractAsyncContextManager:
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(core_router, prefix="/api/v1")
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
+    return JSONResponse(
+        status_code=400,
+        content={"detail": "Invalid command characters found"},
+    )
 
 
 if __name__ == "__main__":
