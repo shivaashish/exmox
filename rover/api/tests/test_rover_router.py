@@ -16,7 +16,7 @@ SessionLocal = sessionmaker(bind=connection, class_=Session, expire_on_commit=Fa
 
 
 @pytest.fixture(scope="module", autouse=True)
-def setup_db():
+def setup_db() -> Generator:
     SQLModel.metadata.create_all(bind=connection)
 
     app.dependency_overrides[session_generator] = lambda: SessionLocal()
@@ -33,7 +33,7 @@ def setup_db():
 
 
 @pytest.fixture
-def client():
+def client() -> TestClient:
     return TestClient(app)
 
 
